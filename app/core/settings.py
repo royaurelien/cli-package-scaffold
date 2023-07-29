@@ -2,22 +2,21 @@ import getpass
 import os
 from functools import lru_cache
 
-from pydantic import BaseSettings
-from pydantic.error_wrappers import ValidationError
+from pydantic import ValidationError
+from pydantic_settings import BaseSettings
 
 from app.common.logger import _logger
 from app.common.path import path
 from app.common.tools import DEFAULT_ENCODING, save_to
 
-MANDATORY_VALUES = ["var_1", "var_2"]
-
 
 class Settings(BaseSettings):
+    __MANDATORY_VALUES__ = ["var_1", "var_2"]
+    __prompt__ = True
+
     api_version: str = "v1"
     var_1: str
     var_2: str
-
-    __prompt__ = False
 
     @property
     def ask_to_user(self):
@@ -31,7 +30,9 @@ class Settings(BaseSettings):
 
     def _get_missing_values(self):
         missing_values = {
-            key: False for key in MANDATORY_VALUES if not self.__dict__.get(key)
+            key: False
+            for key in self.__MANDATORY_VALUES__
+            if not self.__dict__.get(key)
         }
 
         return list(missing_values.items())
@@ -54,7 +55,7 @@ class Settings(BaseSettings):
 
     @staticmethod
     def _get_default_values():
-        return {k: "" for k in MANDATORY_VALUES}
+        return {k: "" for k in Settings.__MANDATORY_VALUES__}
 
     @classmethod
     def new_file(cls, save=True):

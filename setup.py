@@ -13,7 +13,8 @@ setup(
     install_requires=[
         "click>=8.1.6",
         "platformdirs>=3.5.1",
-        "pydantic==1.10.2",
+        "pydantic>=2.1.1",
+        "pydantic_settings>=2.0.2",
     ],
     extras_require={},
     entry_points={
